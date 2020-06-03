@@ -3,8 +3,16 @@ package com.zoportfolio.testalarmmanager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
@@ -19,10 +27,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String RAND_STRING = "GOJIRA WALKS";
     private static final String RAND_STRING_2 = "GOJIRA WALKS FURTHER";
 
+    public static final String NOTIFICATION_CHANNELID_TESTREMINDER = "TESTREMINDER_100";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        createNotificationChannel();
 
         Button btnTestAlarmManagerElapsed = findViewById(R.id.btn_testAlarmManagerElapsed);
         btnTestAlarmManagerElapsed.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void testAlarmManagerRealTimeClock() {
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -80,15 +91,63 @@ public class MainActivity extends AppCompatActivity {
 
         if(alarmManager != null) {
 
-            //Use the Calendar Java utils class, to get the time that will be the next 5 seconds.
+            //Use the Calendar Java utils class, to set a specified time.
+            // Will have to set the alarm time to be at the notification time.
+            // IMPORTANT: is to set the TimeInMillis property of the calendar instance, using System.currentTimeMillis.
             Calendar time = Calendar.getInstance();
-            //time.getTimeInMillis();
-            time.add(Calendar.SECOND, 5);
+            time.setTimeInMillis(System.currentTimeMillis());
+            time.set(Calendar.HOUR_OF_DAY, 23);
+            time.set(Calendar.MINUTE, 38);
+            time.set(Calendar.SECOND, 3);
 
             alarmManager.set(AlarmManager.RTC_WAKEUP,
                     time.getTimeInMillis(),
                     alarmIntent);
         }
+
+    }
+
+
+    private void createNotificationChannel() {
+
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && manager != null) {
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNELID_TESTREMINDER, "Test channel for reminders.", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("This channel is used to test the alarmManager and broadcastReceiver classes.");
+            
+            //NOTE IMPORTANT: Unsure if this is to blame on the emulator being tested right now,
+            // but the lights, vibration, and sound does not work for the notification.
+            // Should test in the morning with my testing device.
+
+
+            //Set the lights for the channel.
+            channel.enableLights(true);
+            channel.setLightColor(Color.GREEN);
+
+            //Set the vibration to the channel.
+            channel.enableVibration(true);
+
+            long VIBRATION_DURATION = 1000L;
+            long WAITING_DURATION = 3000L;
+            long[] vibrationPattern = {VIBRATION_DURATION, WAITING_DURATION, VIBRATION_DURATION, WAITING_DURATION, VIBRATION_DURATION};
+
+            channel.setVibrationPattern(vibrationPattern);
+
+            //Set the sound to the channel as well.
+            //using the default notification sound and the audio attribute of SONIFICATION, which has to be built.
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            AudioAttributes attributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+            channel.setSound(alarmSound, attributes);
+
+            //Set the visibility of the notification to public.
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+            manager.createNotificationChannel(channel);
+        }
+        //TODO: Need to look up how to display notifications on a lower api than 26
+
 
     }
 
