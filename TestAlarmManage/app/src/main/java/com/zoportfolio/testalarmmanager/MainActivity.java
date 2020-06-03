@@ -22,6 +22,8 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Testing is complete, and I can now move this to the main project.
+
     private static final String TAG = "MainActivity.TAG";
 
     private static final String RAND_STRING = "GOJIRA WALKS";
@@ -95,10 +97,11 @@ public class MainActivity extends AppCompatActivity {
             // Will have to set the alarm time to be at the notification time.
             // IMPORTANT: is to set the TimeInMillis property of the calendar instance, using System.currentTimeMillis.
             Calendar time = Calendar.getInstance();
-            time.setTimeInMillis(System.currentTimeMillis());
-            time.set(Calendar.HOUR_OF_DAY, 23);
-            time.set(Calendar.MINUTE, 38);
-            time.set(Calendar.SECOND, 3);
+//            time.setTimeInMillis(System.currentTimeMillis());
+////            time.set(Calendar.HOUR_OF_DAY, 23);
+////            time.set(Calendar.MINUTE, 38);
+////            time.set(Calendar.SECOND, 3);
+            time.add(Calendar.SECOND, 5);
 
             alarmManager.set(AlarmManager.RTC_WAKEUP,
                     time.getTimeInMillis(),
@@ -114,11 +117,13 @@ public class MainActivity extends AppCompatActivity {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && manager != null) {
             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNELID_TESTREMINDER, "Test channel for reminders.", NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("This channel is used to test the alarmManager and broadcastReceiver classes.");
-            
+
             //NOTE IMPORTANT: Unsure if this is to blame on the emulator being tested right now,
             // but the lights, vibration, and sound does not work for the notification.
             // Should test in the morning with my testing device.
 
+            //After testing, the vibration and sound works! The light still does not,
+            // but I think that is because my testing device does not have that hardware.
 
             //Set the lights for the channel.
             channel.enableLights(true);
@@ -127,9 +132,9 @@ public class MainActivity extends AppCompatActivity {
             //Set the vibration to the channel.
             channel.enableVibration(true);
 
-            long VIBRATION_DURATION = 1000L;
-            long WAITING_DURATION = 3000L;
-            long[] vibrationPattern = {VIBRATION_DURATION, WAITING_DURATION, VIBRATION_DURATION, WAITING_DURATION, VIBRATION_DURATION};
+            long VIBRATION_DURATION = 500L;
+            long WAITING_DURATION = 500L;
+            long[] vibrationPattern = {WAITING_DURATION, VIBRATION_DURATION, WAITING_DURATION, VIBRATION_DURATION};
 
             channel.setVibrationPattern(vibrationPattern);
 
@@ -144,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
             //Set the visibility of the notification to public.
             channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
+            //Create the notification channel.
             manager.createNotificationChannel(channel);
         }
         //TODO: Need to look up how to display notifications on a lower api than 26

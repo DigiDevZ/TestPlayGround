@@ -22,10 +22,10 @@ public class TestBroadcast extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if(intent != null) {
             if(intent.hasExtra(RAND_STRING)) {
-                createToast(context, intent.getStringExtra(RAND_STRING));
+                //createToast(context, intent.getStringExtra(RAND_STRING));
                 createNotification(context, intent.getStringExtra(RAND_STRING));
             }else if(intent.hasExtra(RAND_STRING_2)) {
-                createToast(context, intent.getStringExtra(RAND_STRING_2));
+                //createToast(context, intent.getStringExtra(RAND_STRING_2));
                 createNotification(context, intent.getStringExtra(RAND_STRING_2));
             }
         }
@@ -49,7 +49,7 @@ public class TestBroadcast extends BroadcastReceiver {
                     .setContentText(_message)
                     .build();
 
-            int notificationId = 0100;
+            int notificationId = 64;
 
             NotificationManager manager = (NotificationManager) _context.getSystemService(Context.NOTIFICATION_SERVICE);
             if(manager != null) {
