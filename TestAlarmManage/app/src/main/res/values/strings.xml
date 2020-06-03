@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TestAlarmManager</string>
+
+
+    <string name="btn_text_elapsedRealTime">Test Alarm Manager Elapsed Real Time</string>
+    <string name="btn_text_realTimeClock">Test Alarm Manager Real Time Clock</string>
+
+
 </resources>
