@@ -34,3 +34,4 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+KotlinTestProject/app/src/main/java/com/zoportfolio/kotlintestproject/retrofitTest/APIContracts.kt
