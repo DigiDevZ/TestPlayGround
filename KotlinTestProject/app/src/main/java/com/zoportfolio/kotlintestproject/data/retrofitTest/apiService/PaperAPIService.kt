@@ -1,6 +1,8 @@
-package com.zoportfolio.kotlintestproject.retrofitTest
+package com.zoportfolio.kotlintestproject.data.retrofitTest.apiService
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.zoportfolio.kotlintestproject.data.retrofitTest.APIContracts
+import com.zoportfolio.kotlintestproject.data.retrofitTest.dataResponse.AssetDataResponse
 
 import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
@@ -43,8 +45,12 @@ interface PaperAPIService {
                     .request()
                     .newBuilder()
                     .url(url)
-                    .addHeader("APCA-API-KEY-ID", APIContracts.API_KEY_ID)
-                    .addHeader("APCA-API-SECRET-KEY", APIContracts.API_KEY)
+                    .addHeader("APCA-API-KEY-ID",
+                        APIContracts.API_KEY_ID
+                    )
+                    .addHeader("APCA-API-SECRET-KEY",
+                        APIContracts.API_KEY
+                    )
                     .build()
 
                 //Return the request.

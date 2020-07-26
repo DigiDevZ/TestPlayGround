@@ -1,4 +1,4 @@
-package com.zoportfolio.kotlintestproject.retrofitTest
+package com.zoportfolio.kotlintestproject.data.retrofitTest.dataResponse
 
 import com.google.gson.annotations.SerializedName
 

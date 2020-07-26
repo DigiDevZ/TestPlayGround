@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/stockWatchlistFragment">
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.zoportfolio.kotlintestproject.ui.settings.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/stockWatchlistFragment"
+        android:name="com.zoportfolio.kotlintestproject.ui.stockMarket.watchlist.stockWatchlistFragment"
+        android:label="stock_watchlist_fragment"
+        tools:layout="@layout/stock_watchlist_fragment" />
+    <fragment
+        android:id="@+id/stockSearchFragment"
+        android:name="com.zoportfolio.kotlintestproject.ui.stockMarket.search.stockSearchFragment"
+        android:label="stock_search_fragment"
+        tools:layout="@layout/stock_search_fragment" />
+    <fragment
+        android:id="@+id/stockDetailFragment"
+        android:name="com.zoportfolio.kotlintestproject.ui.stockMarket.detail.stockDetailFragment"
+        android:label="stock_detail_fragment"
+        tools:layout="@layout/stock_detail_fragment" />
+</navigation>
