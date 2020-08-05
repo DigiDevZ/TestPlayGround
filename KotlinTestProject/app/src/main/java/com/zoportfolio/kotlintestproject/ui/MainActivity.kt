@@ -8,7 +8,11 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.zoportfolio.kotlintestproject.R
-import com.zoportfolio.kotlintestproject.data.retrofitTest.apiService.PaperAPIService
+import com.zoportfolio.kotlintestproject.data.network.ConnectivityInterceptor
+import com.zoportfolio.kotlintestproject.data.network.ConnectivityInterceptorImpl
+import com.zoportfolio.kotlintestproject.data.network.StockNetworkDataSource
+import com.zoportfolio.kotlintestproject.data.network.StockNetworkDataSourceImpl
+import com.zoportfolio.kotlintestproject.data.network.retrofitTest.apiService.PaperAPIService
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -72,20 +76,20 @@ class MainActivity : AppCompatActivity() {
 
         //SECOND ATTEMPT - **
         //Create the service object.
-        val assetDataService =
-            PaperAPIService()
+//        val assetDataService =
+//            PaperAPIService()
 
         //Using coroutines, by accessing it through GlobalScope.launch
         // and using the IO thread for background operations. (Main thread is for UI operations.)
-        GlobalScope.launch(Dispatchers.IO) {
+//        GlobalScope.launch(Dispatchers.IO) {
             //Call getTradingAsset and await for a response, after the response is filled, assetDataResponse will be filled and fully instantiated.
             //GlobalScope allows for the code in this block to be pushed off until ready.
-            val assetDataResponse = assetDataService.getTradingAsset("SPY").await()
-            Log.i(TAG, "onCreate: ${assetDataResponse.assetClass}")
+//            val assetDataResponse = assetDataService.getTradingAsset("SPY").await()
+//            Log.i(TAG, "onCreate: $assetDataResponse")
 
 //            val toast = Toast.makeText(this@MainActivity, assetDataResponse.assetClass, Toast.LENGTH_LONG)
 //            toast.show()
-        }
+//        }
 
         //TODO: Check the BarsDataResponse TODO for more information on the below commented code.!!!
 //        val barsDataService =
@@ -97,6 +101,10 @@ class MainActivity : AppCompatActivity() {
 //                Log.i(TAG, "In for loop of barsDataResponse: \nbar open time: ${getDateTime(bar.barTime.toString())} \nbar volume: ${bar.barVolume}")
 //            }
 //        }
+
+        // Summary:
+        // Can use JSON to kotlin when creating a response class that will be handling JSON and used in retrofit requests.
+        // NEED to make sure to use val/var and nullable/non-nullable when necessary, and set the only create annotations when needed to be true.
 
         /**
          * NAVIGATION SECTION
@@ -125,7 +133,72 @@ class MainActivity : AppCompatActivity() {
         //Set the action bar with the navController.
         NavigationUI.setupActionBarWithNavController(this, navController)
 
-        //TODO: Document everything I added yesterday and then move onto part 2 of the MVVM Youtube guide.
+        /**
+         * ROOM DATABASE SECTION
+         */
+
+        //To create a table for a class, give it the @Entity(tableName = "name") Annotation.
+        // And to have a value that is custom, not a primitive, use the @Embedded Annotation.
+        // The table also needs a primary key, if the table will only have one entry ever, the ID can be a constant,
+        // otherwise set the primary key to be auto generating and be an Int.
+
+        //There are two types of query, @Query which is static and @RawQuery which takes in a premade query.
+        // To use a dynamic WHERE, in the Dao get function, add a parameter for whatever you want to query by,
+        // and then signify that in the query statement with a : (See AssetDao for example)
+
+        // The database class needs to have a few things before it can be utilized correctly.
+        // The following: @Database Annotation with entities and version in that annotation.
+        // Inherit from RoomDatabase(), an abstract fun that calls the AssetDao or any Dao that it needs to access.
+        // A companion object to make the class a singleton in kotlin.
+
+        // IMPORTANT NOTE: Restructured the AssetResponse to be a data class, and put all of the vars in the constructor
+        // Data classes in kotlin are useful ways to create and have a class that is used for holding data, AKA an object class.
+        // The Data class automatically creates the utility functions like toString() and equal(),
+        // in order to use it succesfully the data class must have all of its properties in the arguements/parameters section.
+        // See AssetResponse for an example of a data class.
+
+        //There is a difference between entry and response.
+        // The entry will be used as the data object that is going to be stored in the database.
+        // The response is the data object used to receive the JSON from the Request.
+        // IMPORTANT NOTE: In my case I think I could safely use my AssetResponse as my entry class as well.
+        // I just need to change the id to be nullable.
+
+        //TODO: Write out all that I added in todays session, focused on part 4 of the tutorial.
+
+        /**
+         * NETWORK ABSTRACTION SECTION
+         */
+
+        //Basically you need a lot of interfaces to allow for abstraction and dependency injection.
+
+        //Created another interceptor (ConnectivityInterceptor) to check for internet connection,
+        // checks for the internet in both the SDK 29 way and previous ways (The previous ways are deperecated and I should be aware of that for the future.)
+
+        //Abstracted a layer of using the PaperAPIService by creating another interface (StockNetworkDataSource)
+        // Not sure how this one works so I will need to re-watch the video to reaffirm my understanding.
+        // I know that this is supposed to allow for me to manipulate the data I receive in one class,
+        // and that it returns and provides LiveData to be observed by the repository.
+
+        //This is how I will be doing network calls from now on, need to describe this process.
+        val apiService = PaperAPIService(ConnectivityInterceptorImpl(this))
+        val stockNetworkDataSource = StockNetworkDataSourceImpl(apiService)
+
+        stockNetworkDataSource.downloadedAssetData.observe(this, androidx.lifecycle.Observer {
+            Log.i(TAG, it.toString())
+        })
+
+        GlobalScope.launch(Dispatchers.IO) {
+            stockNetworkDataSource.fetchAssetData("AMD")
+        }
+
+        /**
+         * REPOSITORY AND KODEIN SECTION
+         */
+
+        //TODO: Started tutorial 5
+        // Go over what I learned from this tutorial video.
+
+
 
     }
 

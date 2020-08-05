@@ -1,4 +1,4 @@
-package com.zoportfolio.kotlintestproject.data.retrofitTest
+package com.zoportfolio.kotlintestproject.data.network.retrofitTest
 
 internal class APIContracts {
     companion object {

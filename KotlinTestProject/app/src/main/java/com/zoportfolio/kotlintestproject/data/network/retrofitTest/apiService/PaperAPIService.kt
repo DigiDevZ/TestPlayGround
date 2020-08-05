@@ -1,8 +1,10 @@
-package com.zoportfolio.kotlintestproject.data.retrofitTest.apiService
+package com.zoportfolio.kotlintestproject.data.network.retrofitTest.apiService
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.zoportfolio.kotlintestproject.data.retrofitTest.APIContracts
-import com.zoportfolio.kotlintestproject.data.retrofitTest.dataResponse.AssetDataResponse
+import com.zoportfolio.kotlintestproject.data.network.ConnectivityInterceptor
+import com.zoportfolio.kotlintestproject.data.network.ConnectivityInterceptorImpl
+import com.zoportfolio.kotlintestproject.data.network.retrofitTest.APIContracts
+import com.zoportfolio.kotlintestproject.data.network.retrofitTest.response.AssetResponse
 
 import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
@@ -20,7 +22,7 @@ interface PaperAPIService {
 
     //If I need to use a dynamic path in the url, then indicate that with = {pathKey}, and following it up with = @Path("pathKey") pathKey: String
     @GET("/v2/assets/{symbol}")
-    fun getTradingAsset(@Path("symbol") symbol: String) : Deferred<AssetDataResponse>
+    fun getTradingAsset(@Path("symbol") symbol: String) : Deferred<AssetResponse>
 
 
 
@@ -28,7 +30,9 @@ interface PaperAPIService {
     companion object {
 
         //operator fun invoke() will invoke the AssetDataService automatically.
-        operator fun invoke(): PaperAPIService {
+        operator fun invoke(
+            connectivityInterceptor: ConnectivityInterceptor
+        ): PaperAPIService {
 
             //Need to create a request interceptor to add the header, which is the two api keys.
             val requestInterceptor = Interceptor { chain ->
@@ -60,6 +64,7 @@ interface PaperAPIService {
             //Add the interceptor by interfacing with the OkHttpClient.
             val okHttpClient = OkHttpClient.Builder()
                 .addInterceptor(requestInterceptor)
+                .addInterceptor(connectivityInterceptor)
                 .build()
 
             //Return this class, after building it with the needed properties

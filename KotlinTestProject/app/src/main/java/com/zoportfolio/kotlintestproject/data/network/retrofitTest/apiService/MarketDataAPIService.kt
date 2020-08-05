@@ -1,8 +1,8 @@
-package com.zoportfolio.kotlintestproject.data.retrofitTest.apiService
+package com.zoportfolio.kotlintestproject.data.network.retrofitTest.apiService
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.zoportfolio.kotlintestproject.data.retrofitTest.APIContracts
-import com.zoportfolio.kotlintestproject.data.retrofitTest.dataResponse.BarObjectDataResponse
+import com.zoportfolio.kotlintestproject.data.network.retrofitTest.APIContracts
+import com.zoportfolio.kotlintestproject.data.network.retrofitTest.response.BarObjectDataResponse
 import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
